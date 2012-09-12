@@ -4,6 +4,7 @@
 @reviewboard_url = "http://reviewboard"
 @reviewboard_username = 'user'
 @reviewboard_password = 'password'
+@reviewboard_target_groups = ['taco', 'shrimp']
 
 require 'rubygems'
 require 'bundler/setup'
@@ -43,7 +44,7 @@ def post_review
 
     review_draft = review['draft/']
     # update the draft with the information on hand
-    parsed = JSON.parse review_draft.put :multipart => true, :target_groups => 'utvikling', :summary => log.lines.first.chomp, :description => log
+    parsed = JSON.parse review_draft.put :multipart => true, :target_groups => @reviewboard_target_groups.join(','), :summary => log.lines.first.chomp, :description => log
     return unless parsed["stat"] == "ok"
 
     review_diffs = review['diffs/']
