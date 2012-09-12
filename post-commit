@@ -25,6 +25,8 @@ def post_review
     submit_as = info.lines.first.chomp
     # grab the diff
     diff = %x[/usr/bin/svnlook diff -r #{@rev} #{@repo_path}]
+    # make sure the diff only contains valid utf-8 sequences
+    diff.encode!('UTF-8', 'UTF-8', :invalid => :replace)
     # have code been modified?
     return unless /^(?:Modified|Added): (.*\.(?:cpp|hpp|h|c|cs|pl|py|sh))$|(Makefile)$/ =~ diff
     # grab the log message
