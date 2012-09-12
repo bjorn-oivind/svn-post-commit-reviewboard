@@ -21,14 +21,14 @@ end
 
 def post_review
     # find the author
-    info = %x[/usr/bin/svnlook info #{@repo_path}]
+    info = %x[/usr/bin/svnlook info -r #{@rev} #{@repo_path}]
     submit_as = info.lines.first.chomp
     # grab the diff
-    diff = %x[/usr/bin/svnlook diff #{@repo_path}]
+    diff = %x[/usr/bin/svnlook diff -r #{@rev} #{@repo_path}]
     # have code been modified?
     return unless /^(?:Modified|Added): (.*\.(?:cpp|hpp|h|c|cs|pl|py|sh))$|(Makefile)$/ =~ diff
     # grab the log message
-    log = %x[/usr/bin/svnlook log #{@repo_path}]
+    log = %x[/usr/bin/svnlook log -r #{@rev} #{@repo_path}]
 
     # set up a resource
     reviewboard = RestClient::Resource.new(@reviewboard_url, :user => @reviewboard_username, :password => @reviewboard_password, :headers => { :accept => 'application/json', :accept_encoding => ''})
@@ -69,6 +69,7 @@ def post_review
 end
 
 @repo_path = ARGV[0]
+@rev = ARGV[1]
 
 post_review
 
